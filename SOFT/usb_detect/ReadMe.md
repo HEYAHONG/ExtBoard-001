@@ -14,4 +14,10 @@
 
 # 截图
 
+## Core不使用USB
+
 ![usb_detect_no_core_usb](usb_detect_no_core_usb.png)
+
+## Core使用USB(采用官方的虚拟串口例程（CDC_ACM）)
+
+![usb_detect_core_usb_vcom](usb_detect_core_usb_vcom.png)
