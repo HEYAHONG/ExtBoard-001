@@ -185,6 +185,7 @@ int main(int argc,const char *argv[])
                     if(info.bus_number == usb_bus)
                     {
                         uint8_t core_port_path[8] = {0};
+                        size_t core_port_path_length=0;
                         memcpy(core_port_path,info.port_path,sizeof(info.port_path));
 
                         for(size_t i =0 ; i < sizeof(core_port_path); i++)
@@ -193,11 +194,12 @@ int main(int argc,const char *argv[])
                             {
                                 //Core连接到端口2
                                 core_port_path[i]=2;
+                                core_port_path_length=i+2;
                                 break;
                             }
                         }
 
-                        if(memcmp(core_port_path,usb_port_path,sizeof(core_port_path)) == 0)
+                        if(core_port_path_length > 0 && memcmp(core_port_path,usb_port_path,core_port_path_length) == 0)
                         {
                             //Core连接到USB，如需对Core进行操作,可在此处打开usb_device
                             info.core_is_use_usb=true;
