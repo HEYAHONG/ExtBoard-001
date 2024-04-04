@@ -4,6 +4,7 @@
 #include "libusb.h"
 #include "Version.h"
 #include "string"
+#include "string.h"
 #include "vector"
 
 #ifndef LIBUSB_API_VERSION
