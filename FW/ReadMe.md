@@ -1,12 +1,13 @@
 # 固件列表
 
 - [DAPLink](DAPLink):定制化DAPLink固件。适用于ExtBoard-001的DAPLink部分,一般只需要烧写一次。
+- [Core](Core):Core固件程序。
 
 # 工具
 
-支持的操作系统:
+主要使用的操作系统:
 
-- Windows 10及更新版本
+- Windows 10及更新版本:DAPLink程序(bootloader、app)烧录、Keil MDK5开发Core程序。
 
 注意:较老版本的系统可能出现驱动问题。关于驱动问题的具体信息参见[DAPLink](DAPLink)。
 
