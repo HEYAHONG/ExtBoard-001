@@ -30,7 +30,7 @@ void SystemClock_Config(void)
     RCC_HCLKConfig(RCC_SYSCLK_Div1); //配置AHB时钟
     RCC_PCLK1Config(RCC_HCLK_Div2);  //配置APB1时钟
     RCC_PCLK2Config(RCC_HCLK_Div1);  //配置APB2时钟
-		RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_4Div5);//配置USB时钟(48MHz)
+    RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_4Div5);//配置USB时钟(48MHz)
 
     RCC_LSICmd(ENABLE); //使能内部低速时钟
     while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET)
@@ -101,7 +101,7 @@ void air32_spi_clock_and_io_init(SPI_TypeDef *spix)
     {
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-				
+
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -177,38 +177,38 @@ rt_uint32_t air32_tim_clock_get(TIM_TypeDef *timx)
 }
 
 struct rt_hwtimer_info hwtimer_info1 =
-    {
-        .maxfreq = 1000000,
-        .minfreq = 2000,
-        .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+{
+    .maxfreq = 1000000,
+    .minfreq = 2000,
+    .maxcnt = 0xFFFF,
+    .cntmode = HWTIMER_CNTMODE_UP,
 
 };
 
 struct rt_hwtimer_info hwtimer_info2 =
-    {
-        .maxfreq = 1000000,
-        .minfreq = 2000,
-        .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+{
+    .maxfreq = 1000000,
+    .minfreq = 2000,
+    .maxcnt = 0xFFFF,
+    .cntmode = HWTIMER_CNTMODE_UP,
 
 };
 
 struct rt_hwtimer_info hwtimer_info3 =
-    {
-        .maxfreq = 1000000,
-        .minfreq = 2000,
-        .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+{
+    .maxfreq = 1000000,
+    .minfreq = 2000,
+    .maxcnt = 0xFFFF,
+    .cntmode = HWTIMER_CNTMODE_UP,
 
 };
 
 struct rt_hwtimer_info hwtimer_info4 =
-    {
-        .maxfreq = 1000000,
-        .minfreq = 2000,
-        .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+{
+    .maxfreq = 1000000,
+    .minfreq = 2000,
+    .maxcnt = 0xFFFF,
+    .cntmode = HWTIMER_CNTMODE_UP,
 
 };
 
