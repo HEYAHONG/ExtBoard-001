@@ -392,6 +392,11 @@
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
             </File>
+            <File>
+              <FileName>aht20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\aht20.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1656,11 +1661,6 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
-              <FileName>fal_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_flash.c</FilePath>
-            </File>
-            <File>
               <FileName>fal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal.c</FilePath>
@@ -1669,6 +1669,11 @@
               <FileName>fal_rtt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_rtt.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_flash.c</FilePath>
             </File>
             <File>
               <FileName>fal_partition.c</FileName>

@@ -30,6 +30,7 @@ void SystemClock_Config(void)
     RCC_HCLKConfig(RCC_SYSCLK_Div1); //配置AHB时钟
     RCC_PCLK1Config(RCC_HCLK_Div2);  //配置APB1时钟
     RCC_PCLK2Config(RCC_HCLK_Div1);  //配置APB2时钟
+		RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_4Div5);//配置USB时钟(48MHz)
 
     RCC_LSICmd(ENABLE); //使能内部低速时钟
     while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET)
