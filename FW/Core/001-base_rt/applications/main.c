@@ -3,6 +3,15 @@
 #include <board.h>
 
 
+#ifdef RT_USING_DFS_MNTTABLE
+#include <dfs_fs.h>
+const struct dfs_mount_tbl mount_table[]=
+{
+    {NULL,"/","tmp",0,NULL},
+    {0}
+};
+#endif
+
 int main(void)
 {
     RCC_ClocksTypeDef clocks;
