@@ -2,6 +2,7 @@
 #include <rtdevice.h>
 #include <board.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define LED_RUN_PIN GET_PIN(A, 0)
 static uint64_t led_run_table=0x5555555555555555;
@@ -33,6 +34,7 @@ static int led_init()
     if(timer!=NULL)
     {
         rt_timer_start(timer);
+        rt_kprintf("LED:run table(hex)=%016" PRIX64 "\n",led_run_table);
     }
     return 0;
 }
@@ -47,12 +49,12 @@ static void led(int argc,const char *argv[])
 {
     if(argc == 1)
     {
-        rt_kprintf("led run table=%016" PRIX64 "\n",led_run_table);
+        rt_kprintf("led run table(hex)=%016" PRIX64 "\n",led_run_table);
     }
     if(argc == 2)
     {
         uint64_t new_table=(uint64_t)strtoll(argv[1],NULL,16);
-        rt_kprintf("led run table=%016" PRIX64 "\n",new_table);
+        rt_kprintf("led run table(hex)=%016" PRIX64 "\n",new_table);
         led_run_table=new_table;
     }
 }
