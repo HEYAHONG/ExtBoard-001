@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>..\3rdparty\rt-thread\master\components\libc\cplusplus;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\spi;..\3rdparty\rt-thread\master\components\libc\compilers\common\extension\fcntl\octal;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\libcpu\arm\cortex-m3;board\ports;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;libraries\CMSIS\Include;..\3rdparty\rt-thread\master\components\drivers\include;applications;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\include;..\3rdparty\rt-thread\master\components\libc\posix\io\eventfd;..\3rdparty\rt-thread\master\components\libc\compilers\common\extension;libraries;..\3rdparty\rt-thread\master\components\finsh;libraries\rt_drivers;..\3rdparty\rt-thread\master\components\libc\compilers\common\include;..\3rdparty\rt-thread\master\components\libc\posix\io\epoll;..\3rdparty\rt-thread\master\include;.;board;libraries\AIR32F10xLib\inc;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\legacy\dfs;..\3rdparty\rt-thread\master\components\legacy;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\filesystems\tmpfs;..\3rdparty\rt-thread\master\libcpu\arm\common;..\3rdparty\rt-thread\master\components\libc\posix\io\poll;..\3rdparty\rt-thread\master\components\fal\inc;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\filesystems\devfs;..\3rdparty\rt-thread\master\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\3rdparty\rt-thread\master\components\libc\cplusplus;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\spi;..\3rdparty\rt-thread\master\components\libc\compilers\common\extension\fcntl\octal;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\libcpu\arm\cortex-m3;board\ports;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\drivers\include;libraries\CMSIS\Include;..\3rdparty\rt-thread\master\components\drivers\include;applications;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\include;..\3rdparty\rt-thread\master\components\libc\posix\io\eventfd;..\3rdparty\rt-thread\master\components\libc\compilers\common\extension;libraries;..\3rdparty\rt-thread\master\components\finsh;libraries\rt_drivers;..\3rdparty\rt-thread\master\components\libc\cplusplus\os;..\3rdparty\rt-thread\master\components\libc\compilers\common\include;..\3rdparty\rt-thread\master\components\libc\posix\io\epoll;..\3rdparty\rt-thread\master\include;.;board;libraries\AIR32F10xLib\inc;..\3rdparty\rt-thread\master\components\drivers\include;..\3rdparty\rt-thread\master\components\legacy\dfs;..\3rdparty\rt-thread\master\components\legacy;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\filesystems\tmpfs;..\3rdparty\rt-thread\master\libcpu\arm\common;..\3rdparty\rt-thread\master\components\libc\posix\io\poll;..\3rdparty\rt-thread\master\components\fal\inc;..\3rdparty\rt-thread\master\components\dfs\dfs_v1\filesystems\devfs;..\3rdparty\rt-thread\master\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,14 +383,19 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\led.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FileName>rs485.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>applications\rs485.cpp</FilePath>
             </File>
             <File>
               <FileName>aht20.c</FileName>
@@ -456,6 +461,21 @@
               <FileName>cxx_crt_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\libc\cplusplus\cxx_crt_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>cxx_Mutex.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\libc\cplusplus\os\cxx_Mutex.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>cxx_Semaphore.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\libc\cplusplus\os\cxx_Semaphore.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>cxx_Thread.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\libc\cplusplus\os\cxx_Thread.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1661,9 +1681,9 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
-              <FileName>fal.c</FileName>
+              <FileName>fal_partition.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal.c</FilePath>
+              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_partition.c</FilePath>
             </File>
             <File>
               <FileName>fal_rtt.c</FileName>
@@ -1671,14 +1691,14 @@
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_rtt.c</FilePath>
             </File>
             <File>
+              <FileName>fal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal.c</FilePath>
+            </File>
+            <File>
               <FileName>fal_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>fal_partition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_partition.c</FilePath>
             </File>
           </Files>
         </Group>
