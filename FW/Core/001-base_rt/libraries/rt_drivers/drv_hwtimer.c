@@ -185,12 +185,12 @@ static rt_err_t air32_hwtimer_control(struct rt_hwtimer_device *device, rt_uint3
 }
 
 static const struct rt_hwtimer_ops hwtimer_ops =
-    {
-        .init = air32_hwtimer_init,
-        .start = air32_hwtimer_start,
-        .stop = air32_hwtimer_stop,
-        .count_get = air32_hwtimer_counter_get,
-        .control = air32_hwtimer_control,
+{
+    .init = air32_hwtimer_init,
+    .start = air32_hwtimer_start,
+    .stop = air32_hwtimer_stop,
+    .count_get = air32_hwtimer_counter_get,
+    .control = air32_hwtimer_control,
 };
 
 static int rt_hw_hwtimer_init(void)

@@ -262,9 +262,9 @@ static rt_err_t air32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
-        pin_irq_hdr_tab[irqindex].hdr == hdr &&
-        pin_irq_hdr_tab[irqindex].mode == mode &&
-        pin_irq_hdr_tab[irqindex].args == args)
+            pin_irq_hdr_tab[irqindex].hdr == hdr &&
+            pin_irq_hdr_tab[irqindex].mode == mode &&
+            pin_irq_hdr_tab[irqindex].args == args)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -321,9 +321,9 @@ static rt_err_t air32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     rt_base_t level;
     rt_int32_t irqindex = -1;
     rt_uint8_t gpio_port_souce=0;
-    GPIO_InitTypeDef GPIO_InitStruct={0};
-    NVIC_InitTypeDef  NVIC_InitStructure={0};
-    EXTI_InitTypeDef EXTI_InitStructure={0};
+    GPIO_InitTypeDef GPIO_InitStruct= {0};
+    NVIC_InitTypeDef  NVIC_InitStructure= {0};
+    EXTI_InitTypeDef EXTI_InitStructure= {0};
 
     if (PIN_PORT(pin) >= PIN_AIRPORT_MAX)
     {
@@ -349,7 +349,7 @@ static rt_err_t air32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = &pin_irq_map[irqindex];
 
         /* Configure GPIO_InitStructure */
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO , ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
         /* Configure GPIO_InitStructure */
         GPIO_InitStruct.GPIO_Pin = PIN_AIRPIN(pin);

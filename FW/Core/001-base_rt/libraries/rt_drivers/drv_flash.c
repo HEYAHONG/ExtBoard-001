@@ -161,7 +161,7 @@ int air32_flash_erase(rt_uint32_t addr, rt_size_t size)
         addr += FLASH_PAGE_SIZE;
     }
 
-        FLASH_Lock();
+    FLASH_Lock();
 
 __exit:
     if(result != RT_EOK)

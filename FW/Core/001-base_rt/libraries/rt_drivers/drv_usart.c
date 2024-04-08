@@ -234,6 +234,7 @@ static rt_err_t air32_control(struct rt_serial_device *serial, int cmd, void *ar
         NVIC_Init(&NVIC_InitStruct);
         /* disable interrupt */
         USART_ITConfig(uart->config->Instance,USART_IT_RXNE,DISABLE);
+        USART_ITConfig(uart->config->Instance,USART_IT_TC,DISABLE);
 
         break;
 
@@ -245,6 +246,7 @@ static rt_err_t air32_control(struct rt_serial_device *serial, int cmd, void *ar
         NVIC_Init(&NVIC_InitStruct);
         /* enable interrupt */
         USART_ITConfig(uart->config->Instance, USART_IT_RXNE,ENABLE);
+        USART_ITConfig(uart->config->Instance, USART_IT_TC,ENABLE);
         break;
     }
 
@@ -293,13 +295,18 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct air32_uart, serial);
 
-    /* UART in mode Receiver -------------------------------------------------*/
 
     if ((USART_GetITStatus(uart->config->Instance, USART_IT_RXNE) != RESET) && (RESET != USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXNE)))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         USART_ClearITPendingBit(uart->config->Instance, USART_IT_RXNE);
         USART_ClearFlag(uart->config->Instance, USART_FLAG_RXNE);
+    }
+    else if ((USART_GetITStatus(uart->config->Instance, USART_IT_TC) != RESET) && (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET))
+    {
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        USART_ClearITPendingBit(uart->config->Instance, USART_IT_TC);
+        USART_ClearFlag(uart->config->Instance, USART_FLAG_TC);
     }
     else
     {
@@ -311,11 +318,6 @@ static void uart_isr(struct rt_serial_device *serial)
         if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_LBD) != RESET)
         {
             USART_ClearFlag(uart->config->Instance, USART_FLAG_LBD);
-        }
-
-        if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET)
-        {
-            USART_ClearFlag(uart->config->Instance, USART_FLAG_TC);
         }
     }
 

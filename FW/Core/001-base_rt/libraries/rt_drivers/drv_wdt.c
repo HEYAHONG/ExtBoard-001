@@ -44,15 +44,15 @@ static rt_err_t air32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
         IWDG_ReloadCounter();
         break;
-        /* set watchdog timeout */
+    /* set watchdog timeout */
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-            wdt_dev->reload = (*((rt_uint32_t *)arg)) * 40000 / 256;
+        wdt_dev->reload = (*((rt_uint32_t *)arg)) * 40000 / 256;
 
-            if (wdt_dev->reload > 0xFFF)
-            {
-                LOG_E("wdg set timeout parameter too large, please less than %ds", 0xFFF * 256 / 40000);
-                return -RT_EINVAL;
-            }
+        if (wdt_dev->reload > 0xFFF)
+        {
+            LOG_E("wdg set timeout parameter too large, please less than %ds", 0xFFF * 256 / 40000);
+            return -RT_EINVAL;
+        }
 
         if (wdt_dev->is_start)
         {
@@ -64,7 +64,7 @@ static rt_err_t air32_wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
-            (*((rt_uint32_t *)arg)) = wdt_dev->reload * 256 / 40000;
+        (*((rt_uint32_t *)arg)) = wdt_dev->reload * 256 / 40000;
         break;
     case RT_DEVICE_CTRL_WDT_START:
         IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);

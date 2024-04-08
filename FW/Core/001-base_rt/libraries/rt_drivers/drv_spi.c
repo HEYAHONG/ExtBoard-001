@@ -34,13 +34,15 @@ struct spi_bus_device
 
 static struct spi_bus_device spi_bus_device_list[] = {
 #ifdef BSP_USING_SPI1
-    {.periph = SPI1,
-     .name = "spi1"},
+    {   .periph = SPI1,
+        .name = "spi1"
+    },
 #endif
 
 #ifdef BSP_USING_SPI2
-    {.periph = SPI2,
-     .name = "spi2"},
+    {   .periph = SPI2,
+        .name = "spi2"
+    },
 #endif
 };
 
@@ -290,7 +292,8 @@ static rt_ssize_t air32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
 
 static struct rt_spi_ops spi_ops = {
     .configure = air32_spi_configure,
-    .xfer = air32_spi_xfer};
+    .xfer = air32_spi_xfer
+};
 
 int rt_hw_spi_init(void)
 {

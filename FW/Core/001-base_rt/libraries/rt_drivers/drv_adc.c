@@ -22,7 +22,7 @@
 static ADC_HandleTypeDef adc_config[] =
 {
 #ifdef BSP_USING_ADC1
-    {                                                                  \
+    {   \
         .Instance                       = ADC1,                        \
         .Init.ADC_Mode                  = ADC_Mode_Independent,        \
         .Init.ADC_ScanConvMode          = DISABLE,                     \
@@ -34,7 +34,7 @@ static ADC_HandleTypeDef adc_config[] =
 #endif
 
 #ifdef BSP_USING_ADC2
-    {                                                                  \
+    {   \
         .Instance                       = ADC2,                        \
         .Init.ADC_Mode                  = ADC_Mode_Independent,        \
         .Init.ADC_ScanConvMode          = DISABLE,                     \
@@ -183,13 +183,13 @@ static rt_err_t air32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     }
 #endif
 
-/* ADC channel number is up to 17 */
+    /* ADC channel number is up to 17 */
 #if !defined(ADC_CHANNEL_18)
     if (channel <= 17)
-/* ADC channel number is up to 19 */
+        /* ADC channel number is up to 19 */
 #elif defined(ADC_CHANNEL_19)
     if (channel <= 19)
-/* ADC channel number is up to 18 */
+        /* ADC channel number is up to 18 */
 #else
     if (channel <= 18)
 #endif
@@ -211,7 +211,7 @@ static rt_err_t air32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 
     ADC_ChanConf.Rank = 1;
     ADC_ChanConf.SamplingTime = ADC_SampleTime_239Cycles5;
-    ADC_RegularChannelConfig(air32_adc_handler->Instance,ADC_ChanConf.Channel , ADC_ChanConf.Rank, ADC_ChanConf.SamplingTime );
+    ADC_RegularChannelConfig(air32_adc_handler->Instance,ADC_ChanConf.Channel, ADC_ChanConf.Rank, ADC_ChanConf.SamplingTime );
 
     /* start ADC */
     ADC_SoftwareStartConvCmd(air32_adc_handler->Instance, ENABLE);
