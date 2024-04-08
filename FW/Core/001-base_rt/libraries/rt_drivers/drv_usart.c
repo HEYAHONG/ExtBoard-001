@@ -304,7 +304,10 @@ static void uart_isr(struct rt_serial_device *serial)
     }
     else if ((USART_GetITStatus(uart->config->Instance, USART_IT_TC) != RESET) && (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET))
     {
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        if(serial->serial_tx != NULL && ((((rt_device_t)serial)->open_flag & RT_DEVICE_FLAG_INT_TX)) !=0 )
+        {
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        }
         USART_ClearITPendingBit(uart->config->Instance, USART_IT_TC);
         USART_ClearFlag(uart->config->Instance, USART_FLAG_TC);
     }
