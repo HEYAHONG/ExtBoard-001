@@ -1,0 +1,23 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+src += Glob('*.cpp')
+
+src += Glob('CONFIG/*.c')
+src += Glob('air32_USB-FS-Device_Driver/src/*.c')
+
+CPPPATH = [ cwd ]
+CPPPATH += [cwd + "/CONFIG" ]
+CPPPATH += [cwd + "/air32_USB-FS-Device_Driver/inc" ]
+
+
+group = DefineGroup('USB', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

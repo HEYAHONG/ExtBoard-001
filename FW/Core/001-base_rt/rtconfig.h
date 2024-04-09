@@ -44,6 +44,7 @@
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
+#define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
@@ -161,6 +162,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
