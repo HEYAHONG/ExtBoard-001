@@ -17,3 +17,7 @@
 ## ubuntu(虚拟机)测试
 
 ![serialport_detect_ubuntu_vm](serialport_detect_ubuntu_vm.png)
+
+## ubuntu测试（Core固件编号001）
+
+![serialport_detect_001_ubuntu](serialport_detect_001_ubuntu.png)

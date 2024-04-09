@@ -47,6 +47,22 @@ int main(int argc,const char *argv[])
                     }
                 }
             }
+
+            //判断Air32的VID与PID
+            if(vid == 0x0483 && pid == 0x5740)
+            {
+                const char *Manufacturer=sp_get_port_usb_manufacturer(port);
+                const char *Product=sp_get_port_usb_product(port);
+                if(Manufacturer!=NULL && Product!=NULL)
+                {
+                    //判断是否是ExtBoard-001的DAPLink
+                    if(strcmp(Manufacturer,"HYH") == 0 && strcmp(Product,"ExtBoard-001-Core") == 0)
+                    {
+                        //打印找到的ExtBoard-001的Console串口
+                        printf("Found ExtBoard-001-Core VCOM %s\n",sp_get_port_name(port));
+                    }
+                }
+            }
         }
     }
 
