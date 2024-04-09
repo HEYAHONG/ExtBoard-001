@@ -102,11 +102,15 @@ void air32_spi_clock_and_io_init(SPI_TypeDef *spix)
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-        GPIO_SetBits(GPIOA,GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7);
+        GPIO_SetBits(GPIOA,GPIO_Pin_5|GPIO_Pin_7);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
     }
 
     if (spix == SPI2)
@@ -118,7 +122,10 @@ void air32_spi_clock_and_io_init(SPI_TypeDef *spix)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-        GPIO_SetBits(GPIOB,GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
+        GPIO_SetBits(GPIOB,GPIO_Pin_13|GPIO_Pin_15);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 ;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
     }
 }
 
