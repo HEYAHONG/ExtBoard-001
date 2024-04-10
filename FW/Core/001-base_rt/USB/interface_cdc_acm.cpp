@@ -2,13 +2,13 @@
 
 RT_WEAK bool cdc_acm_set_line_coding(line_coding_t *line_coding)
 {
-    rt_kprintf("CDC:Set Line Code(Baud=%d,Type(Stopbit)=%d,Parity=%d,Databits=%d)\n",line_coding->bitrate,line_coding->format,line_coding->paritytype,line_coding->datatype);
+    rt_kprintf("\nCDC:Set Line Code(Baud=%d,Type(Stopbit)=%d,Parity=%d,Databits=%d)\n",line_coding->bitrate,line_coding->format,line_coding->paritytype,line_coding->datatype);
     return true;
 }
 
 RT_WEAK bool cdc_acm_get_line_coding(line_coding_t *line_coding)
 {
-    rt_kprintf("CDC:Get Line Code(Baud=%d,Type(Stopbit)=%d,Parity=%d,Databits=%d)\n",line_coding->bitrate,line_coding->format,line_coding->paritytype,line_coding->datatype);
+    rt_kprintf("\nCDC:Get Line Code(Baud=%d,Type(Stopbit)=%d,Parity=%d,Databits=%d)\n",line_coding->bitrate,line_coding->format,line_coding->paritytype,line_coding->datatype);
     return true;
 }
 RT_WEAK bool cdc_acm_send_break()
@@ -17,11 +17,11 @@ RT_WEAK bool cdc_acm_send_break()
 }
 RT_WEAK void cdc_acm_set_dtr(bool dtr)
 {
-    rt_kprintf("CDC:DTR=%s\n",dtr?"true":"false");
+    rt_kprintf("\nCDC:DTR=%s\n",dtr?"true":"false");
 }
 RT_WEAK void cdc_acm_set_rts(bool rts)
 {
-    rt_kprintf("CDC:RTS=%s\n",rts?"true":"false");
+    rt_kprintf("\nCDC:RTS=%s\n",rts?"true":"false");
 }
 
 RT_WEAK void cdc_acm_on_data(uint8_t *data,size_t length)
