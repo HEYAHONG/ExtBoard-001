@@ -234,6 +234,12 @@ void Virtual_Com_Port_Status_In(void)
 {
     if (Request == SET_LINE_CODING)
     {
+        line_coding_t lc= {0};
+        lc.bitrate=linecoding.bitrate;
+        lc.datatype=linecoding.datatype;
+        lc.format=linecoding.format;
+        lc.paritytype=linecoding.paritytype;
+        cdc_acm_set_line_coding(&lc);
         Request = 0;
     }
 }
@@ -282,12 +288,6 @@ RESULT Virtual_Com_Port_Data_Setup(uint8_t RequestNo)
     }
     else if (RequestNo == SET_LINE_CODING)
     {
-        line_coding_t lc= {0};
-        lc.bitrate=linecoding.bitrate;
-        lc.datatype=linecoding.datatype;
-        lc.format=linecoding.format;
-        lc.paritytype=linecoding.paritytype;
-        cdc_acm_set_line_coding(&lc);
         if (Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
         {
             CopyRoutine = Virtual_Com_Port_SetLineCoding;
