@@ -29,6 +29,7 @@ static int usb_init()
     USB_Interrupts_Config();
     USB_Init();
     DP_PUUP = 1;
+    rt_kprintf("USB:Init Ok!\n");
     return 0;
 }
 
