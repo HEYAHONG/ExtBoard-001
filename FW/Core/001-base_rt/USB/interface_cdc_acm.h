@@ -34,6 +34,8 @@ typedef struct
     uint8_t datatype;
 } line_coding_t;
 
+//注意:绝大多数接口均运行于中断当中，建议将数据转入线程后处理。
+
 bool cdc_acm_set_line_coding(line_coding_t *line_coding);
 bool cdc_acm_get_line_coding(line_coding_t *line_coding);
 bool cdc_acm_send_break();
