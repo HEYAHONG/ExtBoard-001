@@ -6,7 +6,7 @@
 
 
 
-#define USB_USART_TXFIFO_SIZE   1024	//USB虚拟串口发送FIFO大小		
+#define USB_USART_TXFIFO_SIZE   4096	//USB虚拟串口发送FIFO大小		
 #define USB_USART_REC_LEN	 	200		//USB串口接收缓冲区最大字节数
 
 //定义一个USB USART FIFO结构体
@@ -18,8 +18,6 @@ typedef struct
 } _usb_usart_fifo;
 extern _usb_usart_fifo uu_txfifo;		//USB串口发送FIFO
 
-extern u8  USB_USART_RX_BUF[USB_USART_REC_LEN]; //接收缓冲,最大USB_USART_REC_LEN个字节.末字节为换行符
-extern u16 USB_USART_RX_STA;   					//接收状态标记
 
 //USB通用代码函数声明
 void Set_USBClock(void);

@@ -8,17 +8,6 @@
 #include "stdarg.h"
 #include "stdio.h"
 
-_usb_usart_fifo uu_txfifo;					//USB串口发送FIFO结构体
-u8  USART_PRINTF_Buffer[USB_USART_REC_LEN];	//usb_printf发送缓冲区
-
-//用类似串口1接收数据的方法,来处理USB虚拟串口接收到的数据.
-u8 USB_USART_RX_BUF[USB_USART_REC_LEN]; 	//接收缓冲,最大USART_REC_LEN个字节.
-//接收状态
-//bit15，	接收完成标志
-//bit14，	接收到0x0d
-//bit13~0，	接收到的有效字节数目
-u16 USB_USART_RX_STA=0;       				//接收状态标记
-
 extern LINE_CODING linecoding;							//USB虚拟串口配置信息
 
 ////USB唤醒中断服务函数
@@ -149,3 +138,15 @@ void IntToUnicode (u32 value, u8 *pbuf, u8 len)
     }
 }
 /////////////////////////////////////////////////////////////////////////////////
+
+_usb_usart_fifo uu_txfifo= {0};					//USB串口发送FIFO结构体
+void USB_UART_Write_FIFO(uint8_t ch)
+{
+    uu_txfifo.buffer[uu_txfifo.writeptr]=ch;
+    uu_txfifo.writeptr++;
+    if(uu_txfifo.writeptr==USB_USART_TXFIFO_SIZE)
+    {
+        uu_txfifo.writeptr=0;
+    }
+
+}

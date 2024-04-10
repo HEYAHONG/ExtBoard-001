@@ -33,6 +33,7 @@
 #include "hw_config.h"
 #include "usb_istr.h"
 #include "usb_pwr.h"
+#include "interface_cdc_acm.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -96,6 +97,7 @@ void EP3_OUT_Callback(void)
 {
     u16 USB_Rx_Cnt;
     USB_Rx_Cnt = USB_SIL_Read(EP3_OUT, USB_Rx_Buffer);	//得到USB接收到的数据及其长度
+    cdc_acm_on_data(USB_Rx_Buffer,USB_Rx_Cnt);
     SetEPRxValid(ENDP3);								//时能端点3的数据接收
 }
 

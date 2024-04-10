@@ -33,6 +33,7 @@
 #include "usb_desc.h"
 #include "usb_pwr.h"
 #include "hw_config.h"
+#include "interface_cdc_acm.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -264,6 +265,16 @@ RESULT Virtual_Com_Port_Data_Setup(uint8_t RequestNo)
 
     if (RequestNo == GET_LINE_CODING)
     {
+        line_coding_t lc= {0};
+        lc.bitrate=linecoding.bitrate;
+        lc.datatype=linecoding.datatype;
+        lc.format=linecoding.format;
+        lc.paritytype=linecoding.paritytype;
+        cdc_acm_get_line_coding(&lc);
+        linecoding.bitrate=lc.bitrate;
+        linecoding.datatype=lc.datatype;
+        linecoding.format=lc.format;
+        linecoding.paritytype=lc.paritytype;
         if (Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
         {
             CopyRoutine = Virtual_Com_Port_GetLineCoding;
@@ -271,6 +282,12 @@ RESULT Virtual_Com_Port_Data_Setup(uint8_t RequestNo)
     }
     else if (RequestNo == SET_LINE_CODING)
     {
+        line_coding_t lc= {0};
+        lc.bitrate=linecoding.bitrate;
+        lc.datatype=linecoding.datatype;
+        lc.format=linecoding.format;
+        lc.paritytype=linecoding.paritytype;
+        cdc_acm_set_line_coding(&lc);
         if (Type_Recipient == (CLASS_REQUEST | INTERFACE_RECIPIENT))
         {
             CopyRoutine = Virtual_Com_Port_SetLineCoding;
@@ -307,7 +324,16 @@ RESULT Virtual_Com_Port_NoData_Setup(uint8_t RequestNo)
         }
         else if (RequestNo == SET_CONTROL_LINE_STATE)
         {
+            cdc_acm_set_dtr((pInformation->USBwValues.bw.bb0&0x1)!=0);
+            cdc_acm_set_rts((pInformation->USBwValues.bw.bb0&0x2)!=0);
             return USB_SUCCESS;
+        }
+        else if (RequestNo == SEND_BREAK)
+        {
+            if(cdc_acm_send_break())
+            {
+                return USB_SUCCESS;
+            }
         }
     }
 
