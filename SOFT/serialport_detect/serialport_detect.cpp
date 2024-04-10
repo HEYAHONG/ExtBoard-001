@@ -29,8 +29,13 @@ int main(int argc,const char *argv[])
             {
                 continue;
             }
+            int usb_bus=0,usb_dev=0;
+            if(SP_OK != sp_get_port_usb_bus_address(port,&usb_bus,&usb_dev))
+            {
+                continue;
+            }
 
-            printf("Found USB SerialPort(%04X:%04X) %s\n",vid,pid,sp_get_port_name(port));
+            printf("Found USB(%d-%d) SerialPort(%04X:%04X) %s\n",usb_bus,usb_dev,vid,pid,sp_get_port_name(port));
 
             //判断DAPLink的VID与PID
             if(vid==0x0D28 && pid == 0x0204)

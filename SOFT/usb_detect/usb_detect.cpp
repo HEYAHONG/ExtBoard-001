@@ -15,6 +15,7 @@
 typedef struct
 {
     uint8_t  bus_number;//ExtBoard-001所在的usb总线号
+    uint8_t  core_dev_address;//Core设备地址(USB)
     uint8_t  port_path[8];//ExtBoard-001所在的usb总线路径,即USB Hub芯片连接的端口
     bool      core_is_use_usb;//ExtBoard-001是否使用usb总线
 } extboard_001_info_t;
@@ -202,6 +203,7 @@ int main(int argc,const char *argv[])
                         if(core_port_path_length > 0 && memcmp(core_port_path,usb_port_path,core_port_path_length) == 0)
                         {
                             //Core连接到USB，如需对Core进行操作,可在此处打开usb_device
+                            info.core_dev_address=libusb_get_device_address(usb_device);
                             info.core_is_use_usb=true;
                         }
                     }
@@ -244,6 +246,10 @@ int main(int argc,const char *argv[])
             }
             printf("\n");
             printf("\tcore is use usb:%s\n",info.core_is_use_usb?"true":"false");
+            if(info.core_is_use_usb)
+            {
+                 printf("\tcore usb dev address:\t%d\n",(int)info.core_dev_address);
+            }
 
         }
     }
