@@ -12,3 +12,6 @@
 | AHT20    | 采用软件I2C(PB8-SCK、PB9-SDA),温湿度检测。                   |
 | USB      | 采用USB接口,无需DP无需1.5K上拉电阻(使用芯片内置上拉电阻)     |
 
+# 截图
+
+![Base-Console](figures/Base-Console.png)
