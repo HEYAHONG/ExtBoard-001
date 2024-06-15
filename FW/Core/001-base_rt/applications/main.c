@@ -26,3 +26,8 @@ int main(void)
     }
 }
 
+
+//HBox“∆÷≤
+typedef void(*ctors_func)();
+ctors_func *__init_array_start=NULL;
+ctors_func *__init_array_end=NULL;

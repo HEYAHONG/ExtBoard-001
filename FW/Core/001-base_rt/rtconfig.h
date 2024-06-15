@@ -12,7 +12,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_HOOKLIST
@@ -25,11 +24,14 @@
 
 /* kservice optimization */
 
-#define RT_KSERVICE_USING_STDLIB
-#define RT_KPRINTF_USING_LONGLONG
+
+/* klibc optimization */
+
 #define RT_USING_DEBUG
+#define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -50,7 +52,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50100
+#define RT_VER_NUM 0x50200
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -118,9 +120,6 @@
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
 
-/* Using USB */
-
-
 /* C/C++ and POSIX layer */
 
 /* ISO-ANSI C layer */
@@ -150,6 +149,9 @@
 
 
 /* Utilities */
+
+
+/* Using USB legacy version */
 
 
 /* RT-Thread Utestcases */
@@ -218,13 +220,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

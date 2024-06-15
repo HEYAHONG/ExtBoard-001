@@ -26,6 +26,12 @@ env = Environment(tools = ['mingw'],
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
+#HCppBox添加标志
+env["Enable_HBox_CPP"]=True
+conf = Configure(env)
+conf.env.Append(CPPDEFINES="HCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1")
+env=conf.Finish()
+
 if rtconfig.PLATFORM in ['iccarm']:
     env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
     env.Replace(ARFLAGS = [''])

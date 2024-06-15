@@ -185,3 +185,5 @@ def dist_handle(BSP_ROOT, dist_dir):
     cwd_path = os.getcwd()
     sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
 
+CFLAGS += " -DHCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1 "
+CXXFLAGS += "  -DHCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1 "
