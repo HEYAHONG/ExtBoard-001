@@ -12,6 +12,11 @@ if ARCH_ARMV8 && ARCH_CPU_64BIT
     config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
         bool
         default y
+    config ARCH_USING_GENERIC_CPUID
+        bool "Using generic cpuid implemenation"
+        select ARCH_USING_HW_THREAD_SELF
+        default y if RT_USING_OFW
+        default n
     endmenu
 endif
 
@@ -51,6 +56,10 @@ config ARCH_ARM
     bool
 
 config ARCH_ARM_CORTEX_M
+    bool
+    select ARCH_ARM
+
+config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
 
@@ -108,6 +117,10 @@ config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
     select RT_USING_HW_ATOMIC
+
+config ARCH_ARM_CORTEX_R52
+    bool
+    select ARCH_ARM_CORTEX_R
 
 config ARCH_ARM_MMU
     bool
@@ -257,5 +270,9 @@ config ARCH_HOST_SIMULATOR
     bool
 
 config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
+
+config ARCH_USING_HW_THREAD_SELF
     bool
     default n

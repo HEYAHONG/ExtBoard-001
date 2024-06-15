@@ -59,6 +59,7 @@
  * 2023-12-22     Shell        Support hook list
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
  *                             Seperate the compiler portings to rtcompiler.h
+ * 2024-03-30     Meco Man     update version number to v5.2.0
  */
 
 #ifndef __RT_DEF_H__
@@ -79,7 +80,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                1               /**< Minor version number (x.X.x) */
+#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
 #define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
@@ -183,7 +184,8 @@ typedef int (*init_fn_t)(void);
 /* init platform, user code... */
 #define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
 /* init sys-timer, clk, pinctrl... */
-#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3")
+#define INIT_SUBSYS_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.3.0")
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3.1")
 /* init early drivers */
 #define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
 
@@ -352,6 +354,15 @@ struct rt_object
     rt_list_t   list;                                    /**< list node of kernel object */
 };
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
+
+/**
+ * iterator of rt_object_for_each()
+ *
+ * data is the data passing in to rt_object_for_each(). iterator can return
+ * RT_EOK to continue the iteration; or any positive value to break the loop
+ * successfully; or any negative errno to break the loop on failure.
+ */
+typedef rt_err_t (*rt_object_iter_t)(rt_object_t object, void *data);
 
 /**
  *  The object type can be one of the follows with specific
@@ -525,23 +536,23 @@ struct rt_object_information
  *     do_other_things();
  * }
  */
-#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv) \
-    do                                                               \
-    {                                                                \
-        nodetype iter;                                               \
-        rt_ubase_t level = rt_spin_lock_irqsave(&lock);              \
-        nested += 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
-        if (!rt_list_isempty(&list))                                 \
-        {                                                            \
-            rt_list_for_each_entry(iter, &list, list_node)           \
-            {                                                        \
-                iter->handler argv;                                  \
-            }                                                        \
-        }                                                            \
-        level = rt_spin_lock_irqsave(&lock);                         \
-        nested -= 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
+#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv)  \
+    do                                                                \
+    {                                                                 \
+        nodetype iter, next;                                          \
+        rt_ubase_t level = rt_spin_lock_irqsave(&lock);               \
+        nested += 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
+        if (!rt_list_isempty(&list))                                  \
+        {                                                             \
+            rt_list_for_each_entry_safe(iter, next, &list, list_node) \
+            {                                                         \
+                iter->handler argv;                                   \
+            }                                                         \
+        }                                                             \
+        level = rt_spin_lock_irqsave(&lock);                          \
+        nested -= 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
     } while (0)
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)                        \
     _RT_OBJECT_HOOKLIST_CALL(name##_hooklistnode_t, name##_nested, \
@@ -568,13 +579,14 @@ struct rt_object_information
  */
 #define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
 #define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
+#define RT_TIMER_FLAG_PROCESSING        0x2             /**< timer's timeout fuction is processing */
 #define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
+#define RT_TIMER_FLAG_PERIODIC          0x4             /**< periodic timer */
 
 #define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x8             /**< soft timer,the timer's callback function will be called in timer thread. */
 #define RT_TIMER_FLAG_THREAD_TIMER \
-    (0x8 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
+    (0x10 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
 
 #define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
@@ -689,6 +701,18 @@ enum
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
+/**
+ * CPU usage statistics data
+ */
+struct rt_cpu_usage_stats
+{
+    rt_ubase_t user;
+    rt_ubase_t system;
+    rt_ubase_t irq;
+    rt_ubase_t idle;
+};
+typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
+
 #ifdef RT_USING_SMP
 
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
@@ -701,15 +725,6 @@ enum
 #ifndef RT_STOP_IPI
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
-
-struct rt_cpu_usage_stats
-{
-    rt_uint64_t user;
-    rt_uint64_t system;
-    rt_uint64_t irq;
-    rt_uint64_t idle;
-};
-typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 
 #define _SCHEDULER_CONTEXT(fileds) fileds
 
@@ -728,8 +743,10 @@ struct rt_cpu
         struct rt_thread        *current_thread;
 
         rt_uint8_t              irq_switch_flag:1;
-        rt_uint8_t              critical_switch_flag:1;
         rt_uint8_t              sched_lock_flag:1;
+#ifndef ARCH_USING_HW_THREAD_SELF
+        rt_uint8_t              critical_switch_flag:1;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
         rt_uint8_t              current_priority;
         rt_list_t               priority_table[RT_THREAD_PRIORITY_MAX];
@@ -748,12 +765,28 @@ struct rt_cpu
 
 #ifdef RT_USING_SMART
     struct rt_spinlock          spinlock;
+#endif /* RT_USING_SMART */
+#ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
-#endif
+#endif /* RT_USING_CPU_USAGE_TRACER */
 };
-typedef struct rt_cpu *rt_cpu_t;
+
+#else /* !RT_USING_SMP */
+struct rt_cpu
+{
+    struct rt_thread            *current_thread;
+    struct rt_thread            *idle_thread;
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    struct rt_cpu_usage_stats   cpu_stat;
+#endif /* RT_USING_CPU_USAGE_TRACER */
+};
 
 #endif /* RT_USING_SMP */
+
+typedef struct rt_cpu *rt_cpu_t;
+/* Noted: As API to reject writing to this variable from application codes */
+#define rt_current_thread rt_thread_self()
 
 struct rt_thread;
 
@@ -924,9 +957,6 @@ struct rt_thread
     void                        *susp_recycler;         /**< suspended recycler on this thread */
     void                        *robust_list;           /**< pi lock, very carefully, it's a userspace list!*/
 
-    rt_uint64_t                 user_time;
-    rt_uint64_t                 system_time;
-
 #ifndef ARCH_MM_MMU
     lwp_sighandler_t            signal_handler[32];
 #else
@@ -939,6 +969,11 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_ubase_t                  user_time;              /**< Ticks on user */
+    rt_ubase_t                  system_time;            /**< Ticks on system */
+#endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
     void *mem_regions;
@@ -953,7 +988,9 @@ struct rt_thread
 typedef struct rt_thread *rt_thread_t;
 
 #ifdef RT_USING_SMART
-#define IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#define LWP_IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#else
+#define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
 /**@}*/
@@ -1340,6 +1377,7 @@ struct rt_device
 #ifdef RT_USING_OFW
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
+    void *power_domain_unit;
 #endif /* RT_USING_DM */
 
     enum rt_device_class_type type;                     /**< device type */

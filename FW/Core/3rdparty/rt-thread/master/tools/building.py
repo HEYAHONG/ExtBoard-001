@@ -22,7 +22,7 @@
 # 2015-01-20     Bernard      Add copyright information
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
 #                             group definition.
-#
+# 2024-04-21     Bernard      Add toolchain detection in sdk packages
 
 import os
 import sys
@@ -36,7 +36,6 @@ from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
-
 
 BuildOptions = {}
 Projects = []
@@ -139,10 +138,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # set RTT_ROOT in ENV
     Env['RTT_ROOT'] = Rtt_Root
+    os.environ["RTT_DIR"] = Rtt_Root
     # set BSP_ROOT in ENV
     Env['BSP_ROOT'] = Dir('#').abspath
+    os.environ["BSP_DIR"] = Dir('#').abspath
+    # set PKGS_ROOT in ENV
+    if not "PKGS_DIR" in os.environ:
+        if "ENV_ROOT" in os.environ:
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
+        elif sys.platform == "win32":
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env/packages")
+        else:
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env/packages")
 
-    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
+    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools'), os.path.join(Rtt_Root, 'tools/kconfiglib')]
 
     # {target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -186,10 +195,26 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_CC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
-    if not os.path.exists(rtconfig.EXEC_PATH):
+    if not utils.CmdExists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
+
+        try:
+            # try to detect toolchains in env
+            envm = utils.ImportModule('env')
+            # from env import GetSDKPath
+            exec_path = envm.GetSDKPath(rtconfig.CC)
+            if 'gcc' in rtconfig.CC:
+                exec_path = os.path.join(exec_path, 'bin')
+
+            if os.path.exists(exec_path):
+                print('set CC to ' + exec_path)
+                rtconfig.EXEC_PATH = exec_path
+                os.environ['RTT_EXEC_PATH'] = exec_path
+        except Exception as e:
+            # detect failed, ignore
+            pass
 
     exec_path = GetOption('exec-path')
     if exec_path:
@@ -303,7 +328,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             print('--global-macros arguments are illegal!')
 
     if GetOption('genconfig'):
-        from genconf import genconfig
+        from menukconfig import genconfig
         genconfig()
         exit(0)
 
@@ -311,25 +336,25 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         from WCS import ThreadStackStaticAnalysis
         ThreadStackStaticAnalysis(Env)
         exit(0)
-    if platform.system() != 'Windows':
-        if GetOption('menuconfig'):
-            from menuconfig import menuconfig
-            menuconfig(Rtt_Root)
-            exit(0)
+
+    if GetOption('menuconfig'):
+        from menukconfig import menuconfig
+        menuconfig(Rtt_Root)
+        exit(0)
 
     if GetOption('pyconfig-silent'):
-        from menuconfig import guiconfig_silent
+        from menukconfig import guiconfig_silent
         guiconfig_silent(Rtt_Root)
         exit(0)
 
     elif GetOption('pyconfig'):
-        from menuconfig import guiconfig
+        from menukconfig import guiconfig
         guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
     if configfn:
-        from menuconfig import mk_rtconfig
+        from menukconfig import mk_rtconfig
         mk_rtconfig(configfn)
         exit(0)
 
@@ -824,6 +849,11 @@ def DoBuilding(target, objects):
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
+
+        # generate build/compile_commands.json
+        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
+            Env.Tool("compilation_db")
+            Env.CompilationDatabase('build/compile_commands.json')
 
         program = Env.Program(target, objects)
 

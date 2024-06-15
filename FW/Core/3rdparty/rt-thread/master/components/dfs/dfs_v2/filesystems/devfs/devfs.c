@@ -382,7 +382,6 @@ static const struct dfs_file_ops _dev_fops =
 {
     .open = dfs_devfs_open,
     .close = dfs_devfs_close,
-    .lseek = generic_dfs_lseek,
     .read = dfs_devfs_read,
     .write = dfs_devfs_write,
     .ioctl = dfs_devfs_ioctl,
@@ -428,7 +427,7 @@ mode_t dfs_devfs_device_to_mode(struct rt_device *device)
 static void dfs_devfs_mkdir(const char *fullpath, mode_t mode)
 {
     int len = rt_strlen(fullpath);
-    char *path = (char *)rt_malloc(len);
+    char *path = (char *)rt_malloc(len + 1);
 
     if (path)
     {
