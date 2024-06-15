@@ -383,6 +383,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
               <FileName>rs485.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>applications\rs485.cpp</FilePath>
@@ -393,19 +403,14 @@
               <FilePath>applications\aht20.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
-            </File>
-            <File>
               <FileName>wdt.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\wdt.c</FilePath>
             </File>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\led.c</FilePath>
+              <FileName>usb-cdc-acm.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>applications\usb-cdc-acm.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1966,11 +1971,6 @@
           <GroupName>Fal</GroupName>
           <Files>
             <File>
-              <FileName>fal_rtt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_rtt.c</FilePath>
-            </File>
-            <File>
               <FileName>fal_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_flash.c</FilePath>
@@ -1979,6 +1979,11 @@
               <FileName>fal_partition.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>fal_rtt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\rt-thread\master\components\fal\src\fal_rtt.c</FilePath>
             </File>
             <File>
               <FileName>fal.c</FileName>
@@ -2071,19 +2076,9 @@
               <FilePath>HCppBox\hbox\heventloop.c</FilePath>
             </File>
             <File>
-              <FileName>hdefaults.c</FileName>
+              <FileName>hringbuf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>HCppBox\hbox\hdefaults.c</FilePath>
-            </File>
-            <File>
-              <FileName>hobject.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>HCppBox\hbox\hobject.c</FilePath>
-            </File>
-            <File>
-              <FileName>hcompiler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>HCppBox\hbox\hcompiler.c</FilePath>
+              <FilePath>HCppBox\hbox\hringbuf.c</FilePath>
             </File>
             <File>
               <FileName>hwatchdog.c</FileName>
@@ -2091,14 +2086,24 @@
               <FilePath>HCppBox\hbox\hwatchdog.c</FilePath>
             </File>
             <File>
+              <FileName>hobject.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>HCppBox\hbox\hobject.c</FilePath>
+            </File>
+            <File>
               <FileName>heventchain.c</FileName>
               <FileType>1</FileType>
               <FilePath>HCppBox\hbox\heventchain.c</FilePath>
             </File>
             <File>
-              <FileName>hringbuf.c</FileName>
+              <FileName>hdefaults.c</FileName>
               <FileType>1</FileType>
-              <FilePath>HCppBox\hbox\hringbuf.c</FilePath>
+              <FilePath>HCppBox\hbox\hdefaults.c</FilePath>
+            </File>
+            <File>
+              <FileName>hcompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>HCppBox\hbox\hcompiler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2106,19 +2111,14 @@
           <GroupName>HBox_CPP</GroupName>
           <Files>
             <File>
+              <FileName>hloop.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>HCppBox\hbox\cpp\hloop.cpp</FilePath>
+            </File>
+            <File>
               <FileName>hsoftdog.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>HCppBox\hbox\cpp\hsoftdog.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>hcpprt.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>HCppBox\hbox\cpp\hcpprt.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>hchain.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>HCppBox\hbox\cpp\hchain.cpp</FilePath>
             </File>
             <File>
               <FileName>hfifo.cpp</FileName>
@@ -2126,14 +2126,19 @@
               <FilePath>HCppBox\hbox\cpp\hfifo.cpp</FilePath>
             </File>
             <File>
-              <FileName>hloop.cpp</FileName>
+              <FileName>hcpprt.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>HCppBox\hbox\cpp\hloop.cpp</FilePath>
+              <FilePath>HCppBox\hbox\cpp\hcpprt.cpp</FilePath>
             </File>
             <File>
               <FileName>hslots.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>HCppBox\hbox\cpp\hslots.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>hchain.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>HCppBox\hbox\cpp\hchain.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -3097,9 +3102,9 @@
           <GroupName>USB</GroupName>
           <Files>
             <File>
-              <FileName>usb_istr.c</FileName>
+              <FileName>usb_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\CONFIG\usb_istr.c</FilePath>
+              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_mem.c</FilePath>
             </File>
             <File>
               <FileName>usb_desc.c</FileName>
@@ -3107,24 +3112,34 @@
               <FilePath>USB\CONFIG\usb_desc.c</FilePath>
             </File>
             <File>
-              <FileName>usb_int.c</FileName>
+              <FileName>usb_prop.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_int.c</FilePath>
+              <FilePath>USB\CONFIG\usb_prop.c</FilePath>
             </File>
             <File>
-              <FileName>usb_regs.c</FileName>
+              <FileName>usb_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_regs.c</FilePath>
-            </File>
-            <File>
-              <FileName>system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>USB\system.c</FilePath>
+              <FilePath>USB\CONFIG\usb_pwr.c</FilePath>
             </File>
             <File>
               <FileName>interface_cdc_acm.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>USB\interface_cdc_acm.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>usb_endp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>USB\CONFIG\usb_endp.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_sil.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_sil.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_regs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_regs.c</FilePath>
             </File>
             <File>
               <FileName>usb_init.c</FileName>
@@ -3137,19 +3152,9 @@
               <FilePath>USB\CONFIG\hw_config.c</FilePath>
             </File>
             <File>
-              <FileName>usb_mem.c</FileName>
+              <FileName>system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>USB\CONFIG\usb_pwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_endp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>USB\CONFIG\usb_endp.c</FilePath>
+              <FilePath>USB\system.c</FilePath>
             </File>
             <File>
               <FileName>usb_core.c</FileName>
@@ -3157,14 +3162,14 @@
               <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_core.c</FilePath>
             </File>
             <File>
-              <FileName>usb_prop.c</FileName>
+              <FileName>usb_istr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\CONFIG\usb_prop.c</FilePath>
+              <FilePath>USB\CONFIG\usb_istr.c</FilePath>
             </File>
             <File>
-              <FileName>usb_sil.c</FileName>
+              <FileName>usb_int.c</FileName>
               <FileType>1</FileType>
-              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_sil.c</FilePath>
+              <FilePath>USB\air32_USB-FS-Device_Driver\src\usb_int.c</FilePath>
             </File>
           </Files>
         </Group>

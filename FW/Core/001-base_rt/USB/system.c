@@ -8,6 +8,12 @@
 #include <rtdevice.h>
 #include <board.h>
 
+bool USB_Is_CONFIGURED()
+{
+    return bDeviceState==CONFIGURED;
+}
+
+
 //USB唤醒中断服务函数
 void USBWakeUp_IRQHandler(void)
 {
