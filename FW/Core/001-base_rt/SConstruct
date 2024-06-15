@@ -31,6 +31,9 @@ env["Enable_HBox_CPP"]=True
 conf = Configure(env)
 conf.env.Append(CPPDEFINES="HCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1")
 env=conf.Finish()
+if  sys.platform.startswith("win32"):
+    Execute("mksymlink.bat")
+
 
 if rtconfig.PLATFORM in ['iccarm']:
     env.Replace(CCCOM = ['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
