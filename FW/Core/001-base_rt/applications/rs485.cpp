@@ -6,6 +6,11 @@
 #include <cxx_mutex.h>
 #include <cxx_thread.h>
 #include "rs485.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "string.h"
+#include <string>
 
 #define RS485_UART_DEVICE_NAME "uart2"
 #define RS485_UART_RTS_PIN GET_PIN(A, 1)
@@ -14,31 +19,67 @@ static rtthread::Mutex rs485_lock("rs485");
 static class rs485_rx_thread:public rtthread::Thread
 {
 public:
-    rs485_rx_thread():rtthread::Thread(4096,(RT_THREAD_PRIORITY_MAX*2)/3,1,"rs485_rx"),on_data(NULL)
+    static void default_on_data(uint8_t *data,size_t data_length)
+    {
+        if(data!=NULL && data_length >0)
+        {
+            rt_kprintf("rs485(len=%d): ",data_length);
+            for(size_t i=0; i<data_length; i++)
+            {
+                if(!iscntrl((char)data[i]))
+                {
+                    rt_kprintf("%02X(%c) ",(int)data[i],(char)data[i]);
+                }
+                else
+                {
+                    rt_kprintf("%02X ",(int)data[i]);
+                }
+            }
+            rt_kprintf("\r\n");
+        }
+    }
+    void (*on_data)(uint8_t *data,size_t data_length);
+    rs485_rx_thread():rtthread::Thread(4096,(RT_THREAD_PRIORITY_MAX*2)/3,1,"rs485_rx"),on_data(default_on_data)
     {
     }
     virtual ~rs485_rx_thread()
     {
     }
-    void (*on_data)(uint8_t ch);
 protected:
     virtual void run(void *para)
     {
+        std::string data_cache;
+        rt_tick_t last_read_tick=rt_tick_get();
         while(true)
         {
-            uint8_t ch = 0;
-            while(rt_device_read(rs485_dev,-1,&ch,1) == 1)
+            uint8_t ch=0;
+            if(rt_device_read(rs485_dev,-1,&ch,1) == 1)
             {
-                if(on_data!=NULL)
-                {
-                    on_data(ch);
-                }
-                else
-                {
-                    rt_kprintf("R:%02X\n",(int)ch);
-                }
+                last_read_tick=rt_tick_get();
+                data_cache+=std::string((char*)&ch,1);
             }
-            rt_thread_mdelay(1);
+            {
+                //判断空闲状态
+                if(!data_cache.empty() && (rt_tick_get()-last_read_tick)>(1000/(((struct rt_serial_device *)rs485_dev)->config.baud_rate/10)+2))
+                {
+                    {
+                        on_data((uint8_t *)data_cache.c_str(),data_cache.length());
+                        data_cache.clear();
+                    }
+                }
+
+                //判断最大字节数,一般来说单次数据不能大于256字节
+                if(data_cache.length()>=256)
+                {
+                    {
+                        on_data((uint8_t *)data_cache.c_str(),data_cache.length());
+                        data_cache.clear();
+                    }
+                }
+
+            }
+            rt_thread_delay(1);
+
         }
     }
 } g_rs485_rx_thread;
@@ -93,14 +134,23 @@ bool rs485_write(uint8_t *buff,size_t len)
     return ret;
 }
 
-bool rs485_set_on_data(void (*on)(uint8_t ch))
+bool rs485_set_on_data(void (*on)(uint8_t * data,size_t data_length))
 {
+    if(on==NULL)
+    {
+        on=	rs485_rx_thread::default_on_data;
+    }
     g_rs485_rx_thread.on_data=on;
     if(rs485_dev == NULL )
     {
         return false;
     }
     return true;
+}
+
+rs485_on_data_t rs485_get_default_on_data()
+{
+    return rs485_rx_thread::default_on_data;
 }
 
 static int rs485_init()
