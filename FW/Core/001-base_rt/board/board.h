@@ -21,7 +21,7 @@ extern "C" {
 
 #define AIR32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define FLASH_PAGE_SIZE              (64)
-#define AIR32_FLASH_SIZE             (128 * 1024)
+#define AIR32_FLASH_SIZE             (256 * 1024)
 #define AIR32_FLASH_END_ADDRESS      ((uint32_t)(AIR32_FLASH_START_ADRESS + AIR32_FLASH_SIZE))
 
 /* Internal SRAM memory size[Kbytes] , Default: 96*/

@@ -28,7 +28,7 @@ extern const struct fal_flash_dev air32_onchip_flash;
 #define FAL_PART_TABLE                                                                      \
 {                                                                                           \
     /*{FAL_PART_MAGIC_WROD,        "app",   "onchip_flash",       0,          240 * 1024, 0}, */\
-    {FAL_PART_MAGIC_WROD,        "param", "onchip_flash",       112* 1024 , 16 * 1024, 0},  \
+    {FAL_PART_MAGIC_WROD,        "param", "onchip_flash",       240* 1024 , 16 * 1024, 0},  \
 }
 #endif /* FAL_PART_HAS_TABLE_CFG */
 #endif /* _FAL_CFG_H_ */

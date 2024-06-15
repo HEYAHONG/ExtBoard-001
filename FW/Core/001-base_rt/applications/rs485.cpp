@@ -10,7 +10,7 @@
 #define RS485_UART_DEVICE_NAME "uart2"
 #define RS485_UART_RTS_PIN GET_PIN(A, 1)
 static rt_device_t rs485_dev=RT_NULL;
-rtthread::Mutex rs485_lock("rs485");
+static rtthread::Mutex rs485_lock("rs485");
 static class rs485_rx_thread:public rtthread::Thread
 {
 public:
