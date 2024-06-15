@@ -95,8 +95,7 @@
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
+#define FAL_DEBUG 0
 #define FAL_PART_HAS_TABLE_CFG
 
 /* Device Drivers */
