@@ -14,7 +14,7 @@ static rtthread::Mutex rs485_lock("rs485");
 static class rs485_rx_thread:public rtthread::Thread
 {
 public:
-    rs485_rx_thread():rtthread::Thread(4096,(RT_THREAD_PRIORITY_MAX*2)/3,0,"rs485_rx"),on_data(NULL)
+    rs485_rx_thread():rtthread::Thread(4096,(RT_THREAD_PRIORITY_MAX*2)/3,1,"rs485_rx"),on_data(NULL)
     {
     }
     virtual ~rs485_rx_thread()
