@@ -26,8 +26,9 @@ int main(void)
     }
 }
 
-
+#if defined(__ARMCC_VERSION)
 //HBox“∆÷≤
 typedef void(*ctors_func)();
 ctors_func *__init_array_start=NULL;
 ctors_func *__init_array_end=NULL;
+#endif
