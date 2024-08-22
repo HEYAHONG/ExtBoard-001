@@ -26,8 +26,9 @@ env = Environment(tools = ['mingw'],
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
-#HCppBox添加标志
-env["Enable_HBox_CPP"]=True
+
+#启用HBox_CPP
+os.environ["Enable_HBox_CPP"]="1"
 conf = Configure(env)
 conf.env.Append(CPPDEFINES="HCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1")
 env=conf.Finish()
