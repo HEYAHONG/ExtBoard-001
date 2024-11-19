@@ -46,6 +46,8 @@ public:
     }
 } g_ctors_state;
 
+#ifdef HCPPRT_USE_CTORS
+
 extern "C"
 {
 #ifdef __GNUC__
@@ -64,11 +66,14 @@ extern "C"
 #endif // __GNUC__
 }
 
+#endif
+
 static void ctors_execute()
 {
+#ifdef HCPPRT_USE_CTORS
+
     if(!g_ctors_state.IsOk())
     {
-
 #ifdef __GNUC__
         /*
         GCC环境中，某些SDK不提供C++构造函数支持，需要手动添加构造函数,需要链接脚本提供___init_array_start与___init_array_end符号。
@@ -83,6 +88,7 @@ static void ctors_execute()
         }
 #endif
     }
+#endif
 }
 
 void hcpprt_init()
@@ -101,15 +107,24 @@ void *operator new(size_t size)
 {
     return hdefaults_malloc(size,NULL);
 }
+
 void *operator new[](size_t size)
 {
     return hdefaults_malloc(size,NULL);
 }
+
 void operator delete(void *ptr)
+#ifdef __clang__
+throw()
+#endif
 {
     hdefaults_free(ptr,NULL);
 }
+
 void operator delete[](void *ptr)
+#ifdef __clang__
+throw()
+#endif
 {
     hdefaults_free(ptr,NULL);
 }

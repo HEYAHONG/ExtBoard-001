@@ -66,8 +66,8 @@ hdefaults_tick_t hdefaults_tick_get(void)
 #elif defined(HDEFAULTS_OS_UNIX)
     {
         hdefaults_tick_t ret=0;
-        struct timeval tv={0};
-        struct timezone tz={0};
+        struct timeval tv= {0};
+        struct timezone tz= {0};
         gettimeofday(&tv, &tz);
         ret+=tv.tv_sec*1000;
         ret+=tv.tv_usec/1000;
@@ -162,4 +162,17 @@ void  hdefaults_mutex_unlock(void *usr)
 #else
 #warning "hdefaults_mutex_unlock is  invalid!"
 #endif
+}
+
+const hdefaults_api_table_t defalut_table=
+{
+    hdefaults_tick_get,
+    hdefaults_malloc,
+    hdefaults_free,
+    hdefaults_mutex_lock,
+    hdefaults_mutex_unlock,
+};
+const hdefaults_api_table_t * hdefaults_get_api_table(void)
+{
+    return &defalut_table;
 }

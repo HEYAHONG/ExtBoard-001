@@ -1,6 +1,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+#include "RC.h"
 
 
 #ifdef RT_USING_DFS_MNTTABLE
@@ -16,6 +17,14 @@ int main(void)
 {
     RCC_ClocksTypeDef clocks;
     RCC_GetClocksFreq(&clocks);
+	
+    {
+        const char * banner=(const char *)RCGetHandle((const char *)"banner");
+        if(banner!=NULL)
+        {
+            rt_kprintf("%s\r\n",banner);
+        }
+    }
 
     rt_kprintf("SYSCLK: %dMhz, \nHCLK: %dMhz, \nPCLK1: %dMhz, \nPCLK2: %dMhz, \nADCCLK: %dMhz\n",
                clocks.SYSCLK_Frequency / 1000000, clocks.HCLK_Frequency / 1000000,
