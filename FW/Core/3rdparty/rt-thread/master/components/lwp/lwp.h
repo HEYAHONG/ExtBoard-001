@@ -197,6 +197,10 @@ struct rt_lwp
     unsigned int asid;
 #endif
     struct rusage rt_rusage;
+
+#ifdef RT_USING_VDSO
+    void *vdso_vbase;
+#endif
 };
 
 
@@ -336,6 +340,8 @@ int lwp_session_set_foreground(rt_session_t session, pid_t pgid);
 /* complete the job control related bussiness on process exit */
 void lwp_jobctrl_on_exit(struct rt_lwp *lwp);
 
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void));
+
 #ifdef __cplusplus
 }
 #endif
@@ -373,6 +379,7 @@ void lwp_jobctrl_on_exit(struct rt_lwp *lwp);
 #define AT_RANDOM 25
 #define AT_HWCAP2 26
 #define AT_EXECFN 31
+#define AT_SYSINFO_EHDR 33
 
 struct process_aux_item
 {

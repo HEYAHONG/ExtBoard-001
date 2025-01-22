@@ -17,7 +17,7 @@ int main(void)
 {
     RCC_ClocksTypeDef clocks;
     RCC_GetClocksFreq(&clocks);
-	
+
     {
         const char * banner=(const char *)RCGetHandle((const char *)"banner");
         if(banner!=NULL)
@@ -35,9 +35,16 @@ int main(void)
     }
 }
 
-#if defined(__ARMCC_VERSION)
-//HBox“∆÷≤
-typedef void(*ctors_func)();
-ctors_func *__init_array_start=NULL;
-ctors_func *__init_array_end=NULL;
+
+#if !defined(RT_USING_DFS_MNTTABLE) && defined(RT_USING_DFS_TMPFS) && defined(RT_USING_DFS_V2)
+#include "dfs_fs.h"
+static int root_mount()
+{
+    /*
+    * TODO:tmpfsπ“‘ÿ“Ï≥£
+    */
+    return dfs_mount(NULL,"tmp","tmp",0,NULL);
+};
+INIT_ENV_EXPORT(root_mount);
 #endif
+

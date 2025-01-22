@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #ifdef BSP_USING_I2C1
-#include <drivers/i2c.h>
+#include <drivers/dev_i2c.h>
 
 static struct rt_i2c_bus_device *  aht20_i2c_bus=RT_NULL;
 

@@ -6,6 +6,10 @@
 #include "usbd_core.h"
 #include "usbd_cdc_ecm.h"
 
+#ifndef CONFIG_USBDEV_CDC_ECM_USING_LWIP
+#error "Please enable CONFIG_USBDEV_CDC_ECM_USING_LWIP for this demo"
+#endif
+
 /*!< endpoint address */
 #define CDC_IN_EP          0x81
 #define CDC_OUT_EP         0x02
@@ -124,7 +128,7 @@ static const uint8_t cdc_ecm_descriptor[] = {
     0x02,
     0x01,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -215,18 +219,19 @@ void cdc_ecm_lwip_init(void)
 
     netif->hwaddr_len = 6;
     memcpy(netif->hwaddr, mac, 6);
+    netif->hwaddr[5] = ~netif->hwaddr[5]; /* device mac can't same as host. */
 
     netif = netif_add(netif, &ipaddr, &netmask, &gateway, NULL, cdc_ecm_if_init, netif_input);
     netif_set_default(netif);
     while (!netif_is_up(netif)) {
     }
 
-    // while (dhserv_init(&dhcp_config)) {}
+    while (dhserv_init(&dhcp_config)) {}
 
-    // while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
+    while (dnserv_init(&ipaddr, PORT_DNS, dns_query_proc)) {}
 }
 
-void usbd_cdc_ecm_data_recv_done(uint8_t *buf, uint32_t len)
+void usbd_cdc_ecm_data_recv_done(uint32_t len)
 {
 }
 
@@ -264,14 +269,14 @@ struct usbd_interface intf0;
 struct usbd_interface intf1;
 
 /* ecm only supports in linux, and you should input the following command
- * 
+ *
  * sudo ifconfig enxaabbccddeeff up
  * sudo dhcpclient enxaabbccddeeff
 */
-void cdc_ecm_init(uint8_t busid, uint32_t reg_base)
+void cdc_ecm_init(uint8_t busid, uintptr_t reg_base)
 {
     cdc_ecm_lwip_init();
-    
+
     usbd_desc_register(busid, cdc_ecm_descriptor);
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf0, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf1, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));

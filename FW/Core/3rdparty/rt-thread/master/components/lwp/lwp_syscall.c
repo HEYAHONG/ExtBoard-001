@@ -198,6 +198,18 @@ void lwp_cleanup(struct rt_thread *tid);
                 case INTF_SO_NO_CHECK:
                     *optname = IMPL_SO_NO_CHECK;
                     break;
+                case INTF_SO_BINDTODEVICE:
+                    *optname = IMPL_SO_BINDTODEVICE;
+                    break;
+                case INTF_SO_TIMESTAMPNS:
+                    *optname = IMPL_SO_TIMESTAMPNS;
+                    break;
+                case INTF_SO_TIMESTAMPING:
+                    *optname = IMPL_SO_TIMESTAMPING;
+                    break;
+                case INTF_SO_SELECT_ERR_QUEUE:
+                    *optname = IMPL_SO_SELECT_ERR_QUEUE;
+                    break;
 
                 /*
                 * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
@@ -461,7 +473,7 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 /* syscall: "lseek" ret: "off_t" args: "int" "off_t" "int" */
 size_t sys_lseek(int fd, size_t offset, int whence)
 {
-    size_t ret = lseek(fd, offset, whence);
+    ssize_t ret = lseek(fd, offset, whence);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -809,7 +821,7 @@ sysret_t sys_unlink(const char *pathname)
 sysret_t sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 
@@ -982,7 +994,7 @@ sysret_t sys_kill(int pid, int signo)
          * of system processes) for which the process has permission to send
          * that signal.
          */
-        kret = -RT_ENOSYS;
+        kret = lwp_signal_kill_all(signo, SI_USER, 0);
     }
 
     switch (kret)
@@ -1229,7 +1241,7 @@ void *sys_mmap2(void *addr, size_t length, int prot,
         rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
     }
 
-    return (char *)rc + offset;
+    return rc < 0 ? (char *)rc : (char *)rc + offset;
 }
 
 sysret_t sys_munmap(void *addr, size_t length)
@@ -1832,6 +1844,7 @@ long _sys_clone(void *arg[])
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
     int tid = 0;
+    rt_err_t err;
 
     unsigned long flags = 0;
     void *user_stack = RT_NULL;
@@ -1935,6 +1948,9 @@ long _sys_clone(void *arg[])
     rt_thread_startup(thread);
     return (long)tid;
 fail:
+    err = GET_ERRNO();
+    RT_ASSERT(err < 0);
+
     lwp_tid_put(tid);
     if (thread)
     {
@@ -1944,7 +1960,7 @@ fail:
     {
         lwp_ref_dec(lwp);
     }
-    return GET_ERRNO();
+    return (long)err;
 }
 
 rt_weak long sys_clone(void *arg[])
@@ -2172,7 +2188,7 @@ rt_weak sysret_t sys_vfork(void)
 
 sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 {
-    int error = -1;
+    rt_err_t error = -1;
     size_t len;
     struct rt_lwp *new_lwp = NULL;
     struct rt_lwp *lwp;
@@ -2223,8 +2239,9 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
     if (access(kpath, X_OK) != 0)
     {
+        error = rt_get_errno();
         rt_free(kpath);
-        return -EACCES;
+        return (sysret_t)error;
     }
 
     /* setup args */
@@ -2875,23 +2892,12 @@ sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namele
     lwp_get_from_user(&family, (void *)name, 2);
     if (family == AF_UNIX)
     {
-        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&un_addr, (void *)name, sizeof(struct sockaddr_un));
         ret = bind(socket, (struct sockaddr *)&un_addr, namelen);
     }
     else if (family == AF_NETLINK)
     {
-        if (!lwp_user_accessable((void *)name, namelen))
-        {
-            return -EFAULT;
-        }
-
         lwp_get_from_user(&sa, (void *)name, namelen);
-
         ret = bind(socket, &sa, namelen);
     }
     else
@@ -3132,6 +3138,11 @@ static int netflags_muslc_2_lwip(int flags)
     {
         flgs |= MSG_MORE;
     }
+    if (flags & MSG_ERRQUEUE)
+    {
+        flgs |= MSG_ERRQUEUE;
+    }
+
     return flgs;
 }
 
@@ -4473,8 +4484,9 @@ sysret_t sys_mkdir(const char *path, mode_t mode)
 
 sysret_t sys_rmdir(const char *path)
 {
-#ifdef ARCH_MM_MMU
     int err = 0;
+    int ret = 0;
+#ifdef ARCH_MM_MMU
     int len = 0;
     char *kpath = RT_NULL;
 
@@ -4496,28 +4508,24 @@ sysret_t sys_rmdir(const char *path)
         return -EINVAL;
     }
 
-    err = rmdir(kpath);
+    ret = rmdir(kpath);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
 
     kmem_put(kpath);
 
-    return (err < 0 ? GET_ERRNO() : err);
+    return (err < 0 ? err : ret);
 #else
-    int ret = rmdir(path);
-    return (ret < 0 ? GET_ERRNO() : ret);
+    ret = rmdir(path);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
+    return (err < 0 ? err : ret);
 #endif
 }
-
-#ifdef RT_USING_MUSLLIBC
-typedef uint64_t ino_t;
-#endif
-
-struct libc_dirent {
-    ino_t d_ino;
-    off_t d_off;
-    unsigned short d_reclen;
-    unsigned char d_type;
-    char d_name[DIRENT_NAME_MAX];
-};
 
 sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
 {
@@ -4751,7 +4759,7 @@ sysret_t sys_clock_gettime(clockid_t clk, struct timespec *ts)
 sysret_t sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     int ret = 0;
-    dbg_log(DBG_LOG, "sys_nanosleep\n");
+    LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
         return -EFAULT;
 
@@ -4999,7 +5007,8 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
         err = dfs_file_readlink(copy_path, link_fn, DFS_PATH_MAX);
         if (err > 0)
         {
-            rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
+            buf[bufsz > err ? err : bufsz] = '\0';
+            rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz);
         }
         else
         {
@@ -5734,58 +5743,94 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
-sysret_t sys_mount(char *source, char *target,
-        char *filesystemtype,
-        unsigned long mountflags, void *data)
+static char *_cp_from_usr_string(char *dst, char *src, size_t length)
 {
-    char *copy_source;
-    char *copy_target;
-    char *copy_filesystemtype;
-    size_t len_source, copy_len_source;
-    size_t len_target, copy_len_target;
-    size_t len_filesystemtype, copy_len_filesystemtype;
+    char *rc;
+    size_t copied_bytes;
+    if (length)
+    {
+        copied_bytes = lwp_get_from_user(dst, src, length);
+        dst[copied_bytes] = '\0';
+        rc = dst;
+    }
+    else
+    {
+        rc = RT_NULL;
+    }
+    return rc;
+}
+
+sysret_t sys_mount(char *source, char *target, char *filesystemtype,
+                   unsigned long mountflags, void *data)
+{
+    char *kbuffer, *ksource, *ktarget, *kfs;
+    size_t len_source, len_target, len_fs;
     char *tmp = NULL;
     int ret = 0;
+    struct stat buf = {0};
+    char *dev_fullpath = RT_NULL;
 
-    len_source = lwp_user_strlen(source);
-    if (len_source <= 0)
+    len_source = source ? lwp_user_strlen(source) : 0;
+    if (len_source < 0)
         return -EINVAL;
 
-    len_target = lwp_user_strlen(target);
+    len_target = target ? lwp_user_strlen(target) : 0;
     if (len_target <= 0)
         return -EINVAL;
 
-    len_filesystemtype = lwp_user_strlen(filesystemtype);
-    if (len_filesystemtype <= 0)
+    len_fs = filesystemtype ? lwp_user_strlen(filesystemtype) : 0;
+    if (len_fs < 0)
         return -EINVAL;
 
-    copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
-    if (!copy_source)
+    kbuffer = (char *)rt_malloc(len_source + 1 + len_target + 1 + len_fs + 1);
+    if (!kbuffer)
     {
         return -ENOMEM;
     }
-    copy_target = copy_source + len_source + 1;
-    copy_filesystemtype = copy_target + len_target + 1;
 
-    copy_len_source = lwp_get_from_user(copy_source, source, len_source);
-    copy_source[copy_len_source] = '\0';
-    copy_len_target = lwp_get_from_user(copy_target, target, len_target);
-    copy_target[copy_len_target] = '\0';
-    copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
-    copy_filesystemtype[copy_len_filesystemtype] = '\0';
+    /* get parameters from user space */
+    ksource = kbuffer;
+    ktarget = ksource + len_source + 1;
+    kfs = ktarget + len_target + 1;
+    ksource = _cp_from_usr_string(ksource, source, len_source);
+    ktarget = _cp_from_usr_string(ktarget, target, len_target);
+    kfs = _cp_from_usr_string(kfs, filesystemtype, len_fs);
 
-    if (strcmp(copy_filesystemtype, "nfs") == 0)
+    if (mountflags & MS_REMOUNT)
     {
-        tmp = copy_source;
-        copy_source = NULL;
+        ret = dfs_remount(ktarget, mountflags, data);
     }
-    if (strcmp(copy_filesystemtype, "tmp") == 0)
+    else
     {
-        copy_source = NULL;
-    }
-    ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
-    rt_free(copy_source);
+        if (strcmp(kfs, "nfs") == 0)
+        {
+            tmp = ksource;
+            ksource = NULL;
+        }
+        if (strcmp(kfs, "tmp") == 0)
+        {
+            ksource = NULL;
+        }
 
+        if (ksource && !dfs_file_stat(ksource, &buf) && S_ISBLK(buf.st_mode))
+        {
+            dev_fullpath = dfs_normalize_path(RT_NULL, ksource);
+            RT_ASSERT(rt_strncmp(dev_fullpath, "/dev/", sizeof("/dev/") - 1) == 0);
+            ret = dfs_mount(dev_fullpath + sizeof("/dev/") - 1, ktarget, kfs, 0, tmp);
+        }
+        else
+        {
+            ret = dfs_mount(ksource, ktarget, kfs, 0, tmp);
+        }
+
+        if (ret < 0)
+        {
+            ret = -rt_get_errno();
+        }
+    }
+
+    rt_free(kbuffer);
+    rt_free(dev_fullpath);
     return ret;
 }
 
@@ -5819,7 +5864,7 @@ sysret_t sys_umount2(char *__special_file, int __flags)
 sysret_t sys_link(const char *existing, const char *new)
 {
     int ret = -1;
-
+    int err = 0;
 #ifdef RT_USING_DFS_V2
 #ifdef ARCH_MM_MMU
     int len = 0;
@@ -5866,6 +5911,10 @@ sysret_t sys_link(const char *existing, const char *new)
     }
 
     ret = dfs_file_link(kexisting, knew);
+    if(ret  < 0)
+    {
+        err = GET_ERRNO();
+    }
 
     kmem_put(knew);
     kmem_put(kexisting);
@@ -5874,36 +5923,40 @@ sysret_t sys_link(const char *existing, const char *new)
 #endif
 #else
     SET_ERRNO(EFAULT);
+    err = GET_ERRNO();
 #endif
 
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return (err < 0 ? err : ret);
 }
 
 sysret_t sys_symlink(const char *existing, const char *new)
 {
     int ret = -1;
-
+    int err = 0 ;
 #ifdef ARCH_MM_MMU
-    int err;
 
-    err = lwp_user_strlen(existing);
-    if (err <= 0)
+    ret = lwp_user_strlen(existing);
+    if (ret <= 0)
     {
         return -EFAULT;
     }
 
-    err = lwp_user_strlen(new);
-    if (err <= 0)
+    ret = lwp_user_strlen(new);
+    if (ret <= 0)
     {
         return -EFAULT;
     }
 #endif
 #ifdef RT_USING_DFS_V2
     ret = dfs_file_symlink(existing, new);
+    if(ret < 0)
+    {
+        err = GET_ERRNO();
+    }
 #else
     SET_ERRNO(EFAULT);
 #endif
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return (err < 0 ? err : ret);
 }
 
 sysret_t sys_eventfd2(unsigned int count, int flags)
@@ -6133,16 +6186,27 @@ sysret_t sys_chown(const char *pathname, uid_t owner, gid_t group)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-#include <sys/reboot.h>
-sysret_t sys_reboot(int magic, int magic2, int type)
+#ifndef LWP_USING_RUNTIME
+sysret_t lwp_teardown(struct rt_lwp *lwp, void (*cb)(void))
+{
+    /* if no LWP_USING_RUNTIME configured */
+    return -ENOSYS;
+}
+#endif
+
+sysret_t sys_reboot(int magic, int magic2, int type, void *arg)
 {
     sysret_t rc;
     switch (type)
     {
-        /* TODO add software poweroff protocols */
+        /* Hardware reset */
         case RB_AUTOBOOT:
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_reset);
+            break;
+
+        /* Stop system and switch power off */
         case RB_POWER_OFF:
-            rt_hw_cpu_reset();
+            rc = lwp_teardown(lwp_self(), rt_hw_cpu_shutdown);
             break;
         default:
             rc = -ENOSYS;

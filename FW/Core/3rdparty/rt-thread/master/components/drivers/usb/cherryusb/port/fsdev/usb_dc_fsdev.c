@@ -117,6 +117,11 @@ int usbd_set_address(uint8_t busid, const uint8_t addr)
     return 0;
 }
 
+int usbd_set_remote_wakeup(uint8_t busid)
+{
+    return -1;
+}
+
 uint8_t usbd_get_port_speed(uint8_t busid)
 {
     return USB_SPEED_FULL;
@@ -149,7 +154,8 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
 
         case USB_ENDPOINT_TYPE_ISOCHRONOUS:
             wEpRegVal = USB_EP_ISOCHRONOUS;
-            break;
+            USB_LOG_ERR("Do not support iso in fsdev\r\n");
+            return -1;
 
         default:
             break;
@@ -255,8 +261,20 @@ int usbd_ep_clear_stall(uint8_t busid, const uint8_t ep)
 
 int usbd_ep_is_stalled(uint8_t busid, const uint8_t ep, uint8_t *stalled)
 {
+    uint8_t ep_idx = USB_EP_GET_IDX(ep);
+
     if (USB_EP_DIR_IS_OUT(ep)) {
+        if (PCD_GET_EP_RX_STATUS(USB, ep_idx) & USB_EP_RX_STALL) {
+            *stalled = 1;
+        } else {
+            *stalled = 0;
+        }
     } else {
+        if (PCD_GET_EP_TX_STATUS(USB, ep_idx) & USB_EP_TX_STALL) {
+            *stalled = 1;
+        } else {
+            *stalled = 0;
+        }
     }
     return 0;
 }

@@ -5,7 +5,7 @@
  */
 #include "usbd_core.h"
 #include "usbd_msc.h"
-#include "usbd_cdc.h"
+#include "usbd_cdc_acm.h"
 #include "usbd_hid.h"
 
 /*!< endpoint address */
@@ -147,7 +147,7 @@ const uint8_t cdc_acm_hid_msc_descriptor[] = {
     0x00,
     0x00,
     0x40,
-    0x01,
+    0x00,
     0x00,
 #endif
     0x00
@@ -301,7 +301,7 @@ struct usbd_interface intf1;
 struct usbd_interface intf2;
 struct usbd_interface intf3;
 
-void cdc_acm_hid_msc_descriptor_init(uint8_t busid, uint32_t reg_base)
+void cdc_acm_hid_msc_descriptor_init(uint8_t busid, uintptr_t reg_base)
 {
     usbd_desc_register(busid, cdc_acm_hid_msc_descriptor);
 
@@ -332,14 +332,15 @@ void cdc_acm_hid_msc_descriptor_init(uint8_t busid, uint32_t reg_base)
   */
 void hid_mouse_test(uint8_t busid)
 {
+    if(usb_device_is_configured(busid) == false) {
+        return;
+    }
     /*!< move mouse pointer */
     mouse_cfg.x += 10;
     mouse_cfg.y = 0;
-    int ret = usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
-    if (ret < 0) {
-        return;
-    }
+
     hid_state = HID_STATE_BUSY;
+    usbd_ep_start_write(busid, HID_INT_EP, (uint8_t *)&mouse_cfg, 4);
     while (hid_state == HID_STATE_BUSY) {
     }
 }

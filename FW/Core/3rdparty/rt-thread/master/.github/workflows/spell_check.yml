@@ -1,11 +1,6 @@
 name: Check Spelling
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'documentation/**'
   pull_request:
     branches:
       - master
@@ -14,7 +9,7 @@ on:
 jobs:
   spelling:
     name: Check Spelling
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.repository_owner == 'RT-Thread'
     steps:
     - name: output ignore words info
