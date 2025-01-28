@@ -34,6 +34,8 @@ conf.env.Append(CPPDEFINES="HCPPRT_NO_NEW_AND_DELETE_OVERRIDE=1")
 env=conf.Finish()
 if  sys.platform.startswith("win32"):
     Execute("mksymlink.bat")
+if  (sys.platform.startswith("linux") or sys.platform.startswith("cygwin") or sys.platform.startswith("unix")) and (not os.path.exists(os.getcwd()+"/HCppBox")):
+    os.symlink(os.getcwd()+"/../3rdparty/HCppBox/master",os.getcwd()+"/HCppBox",True)    
 os.environ['HRC_FS_ROOT_DIR']=(os.getcwd()+"/rc")
 
 
