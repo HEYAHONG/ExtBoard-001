@@ -34,6 +34,45 @@
 #endif
 
 
+#ifdef _GETOPT_H_
+#undef _GETOPT_H_
+#endif
+#ifdef _GETOPT_DECLARED
+#undef _GETOPT_DECLARED
+#endif
+#ifdef _OPTRESET_DECLARED
+#undef _OPTRESET_DECLARED
+#endif
+
+#ifdef  optarg
+#undef  optarg
+#endif
+#define optarg argtable3_optarg
+#ifdef  optind
+#undef  optind
+#endif
+#define optind argtable3_optind
+#ifdef  opterr
+#undef  opterr
+#endif
+#define opterr argtable3_opterr
+#ifdef  optopt
+#undef  optopt
+#endif
+#define optopt argtable3_optopt
+#ifdef  optreset
+#undef  optreset
+#endif
+#define optreset argtable3_optreset
+#ifdef  getopt_long
+#undef  getopt_long
+#endif
+#define getopt_long argtable3_getopt_long
+#ifdef  getopt
+#undef  getopt
+#endif
+#define getopt argtable3_getopt
+
 //定义环境变量相关函数
 #define getenv hgetenv
 
