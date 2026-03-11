@@ -15,18 +15,31 @@
 #if !defined(HTHRD_USING_FREERTOS)
 #define  HTHRD_USING_FREERTOS   1
 #endif
-#elif defined(HTHRD_USING_FREERTOS)
+#elif defined(HTHRD_USING_FREERTOS) || defined(FREERTOS)
+
+
+#if defined(FREERTOS)
+#if !defined(HTHRD_USING_FREERTOS)
+#define HTHRD_USING_FREERTOS 1
+#endif
+#endif
+
 /*
  * 注意:使用外部FreerTOS内核时，需要在配置文件中包含FreeRTOS.h与task.h
  */
+#if !defined(INC_FREERTOS_H)
 #if !defined(HTHRD_FREERTOS_FREERTOS_HEADER)
 #define  HTHRD_FREERTOS_FREERTOS_HEADER "FreeRTOS.h"
 #endif
 #include HTHRD_FREERTOS_FREERTOS_HEADER
+#endif
+
+#if !defined(INC_TASK_H)
 #if !defined(HTHRD_FREERTOS_TASK_HEADER)
 #define  HTHRD_FREERTOS_TASK_HEADER "task.h"
 #endif
 #include HTHRD_FREERTOS_TASK_HEADER
+#endif
 
 #if !defined(configSUPPORT_STATIC_ALLOCATION) || (configSUPPORT_STATIC_ALLOCATION)<(1)
 #undef HTHRD_USING_FREERTOS
@@ -61,6 +74,13 @@ extern int HTHRD_CREATE(hthrd_t *thr,hthrd_start_t func,void *arg );
 int hthrd_create(hthrd_t *thr,hthrd_start_t func,void *arg )
 {
     int ret=hthrd_error;
+    hthrd_t temp_thr;
+    bool need_detach=false;
+    if(thr==NULL)
+    {
+        thr=&temp_thr;
+        need_detach=true;
+    }
 #if defined(HTHRD_CREATE)
     ret=HTHRD_CREATE(thr,func,arg);
 #elif defined(HDEFAULTS_LIBC_HAVE_THREADS)
@@ -76,6 +96,10 @@ int hthrd_create(hthrd_t *thr,hthrd_start_t func,void *arg )
 #elif defined(HTHRD_USING_FREERTOS)
     ret=hthrd_freertos_create(thr,func,arg);
 #endif
+    if(ret==hthrd_success && need_detach)
+    {
+        hthrd_detach(*thr);
+    }
     return ret;
 }
 

@@ -43,7 +43,7 @@ sudo mount -t squashfs sfs文件路径 /tmp/opeLuat
 
 MDK5为集成开发环境，可对MCU的程序进行编译、调试等
 
-为支持使用CMSIS-DAP，MDK5的最低版本为5.29。
+为支持使用CMSIS-DAP，MDK5的最低版本为5.43。
 
 ### Air32F103
 

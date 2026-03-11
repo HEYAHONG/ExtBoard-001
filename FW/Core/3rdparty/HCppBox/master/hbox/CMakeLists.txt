@@ -6,12 +6,16 @@ if(MSVC)
     add_compile_options(-utf-8 )
 endif()
 
-add_library(HBox EXCLUDE_FROM_ALL)
+add_library(HBox STATIC EXCLUDE_FROM_ALL)
 file(GLOB  HBOX_C_CPP_FILES *.cpp *.hpp *.c *.h cpp/*.cpp cpp/*.hpp cpp/*.c cpp/*.h h3rdparty/*.cpp h3rdparty/*.hpp h3rdparty/*.c h3rdparty/*.h )
 target_sources(HBox PRIVATE ${HBOX_C_CPP_FILES})
 target_include_directories(HBox PUBLIC ./ )
 target_include_directories(HBox PUBLIC ./cpp/ )
 
+
+if(MSVC)
+    add_compile_definitions(HBox PRIVATE _CRT_SECURE_NO_WARNINGS=1 )
+endif()
 
 #设置属性
 set_property(TARGET HBox PROPERTY CXX_STANDARD 11)
@@ -39,6 +43,13 @@ check_include_file(sys/mman.h HAVE_SYS_MMAN_H)
 if(HAVE_SYS_MMAN_H)
 target_compile_definitions(HBox PUBLIC  HAVE_SYS_MMAN_H=1)
 endif()
+
+#查找sys/ioctl.h
+check_include_file(sys/ioctl.h HAVE_SYS_IOCTL_H)
+if(HAVE_SYS_IOCTL_H)
+target_compile_definitions(HBox PUBLIC  HAVE_SYS_IOCTL_H=1)
+endif()
+
 
 #查找unistd.h
 check_include_file(unistd.h HAVE_UNISTD_H)
