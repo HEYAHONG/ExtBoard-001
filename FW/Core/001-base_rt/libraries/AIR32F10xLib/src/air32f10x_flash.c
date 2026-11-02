@@ -215,6 +215,12 @@
 @endcode
 */
 
+#ifdef __GNUC__
+#ifndef asm
+#define asm __asm__
+#endif
+#endif
+
 /**
   * @brief  Sets the code latency value.
   * @note   This function can be used for all AIR32F103 devices.
@@ -662,7 +668,7 @@ void SetStrt(void)
     asm("NOP");
     asm("NOP");
     asm("NOP");
-    asm("FLAGLABLE");
+    asm("FLAGLABLE:");
     asm("LDR        R1, =0x4002200C");
     asm("LDR        R2, [R1]");
     asm("AND        R2, #0x01");
